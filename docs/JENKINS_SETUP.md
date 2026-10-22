@@ -32,8 +32,9 @@ Required plugins: **Pipeline**, **Git**, **JUnit** (all default).
 4. Polling (`pollSCM`) is already defined in the Jenkinsfile; the first manual build registers it.
 
 ## Results
-- **Test Result** tab: JUnit results from Playwright and Cypress.
-- **Build Artifacts**: `reports/playwright/html/index.html` (open it for the Playwright report), `reports/k6/summary.json`, Cypress screenshots on failure.
+- **Test Result** tab: JUnit results from Cypress, Playwright and k6 (thresholds and checks).
+- **Playwright Report** link in the job menu (needs the HTML Publisher plugin; if the page is blank, see below).
+- **Build Artifacts**: `reports/playwright/html/index.html` (open it for the Playwright report), `reports/k6/junit.xml` + `summary.json`, Cypress screenshots on failure.
 - A failed k6 threshold fails the build (p95 latency, error rate).
 
 ## Troubleshooting
@@ -47,3 +48,10 @@ Required plugins: **Pipeline**, **Git**, **JUnit** (all default).
 
 ## Using Windows as the Jenkins agent
 Replace `sh` with `bat`, drop the `apt` steps and install Node 22 + k6 (winget/choco). The npm scripts work unchanged.
+
+## Blank Playwright Report page?
+Jenkins blocks scripts in published HTML by default. Either download `index.html` from the build artifacts and open it
+locally, or relax the policy once in **Manage Jenkins -> Script Console** (resets on Jenkins restart; fine for a private practice box):
+```groovy
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox allow-scripts; default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:")
+```

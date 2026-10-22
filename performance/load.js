@@ -83,3 +83,47 @@ export default function () {
 
   sleep(1);
 }
+
+// ---------- reporting ----------
+// k6 has no built-in JUnit output, so build one: every threshold and every check becomes a test case.
+// (handleSummary replaces k6's default end-of-test text, so a short summary is printed here too.)
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function collectChecks(group, out = []) {
+  for (const c of group.checks || []) out.push(c);
+  for (const g of group.groups || []) collectChecks(g, out);
+  return out;
+}
+
+export function handleSummary(data) {
+  const cases = [];
+  for (const [metric, m] of Object.entries(data.metrics)) {
+    for (const [expr, t] of Object.entries(m.thresholds || {})) {
+      const ok = typeof t === 'object' ? t.ok : t;
+      cases.push({ name: `threshold ${metric} ${expr}`, ok, detail: `${metric} ${JSON.stringify(m.values)}` });
+    }
+  }
+  for (const c of collectChecks(data.root_group)) {
+    cases.push({ name: `check ${c.name}`, ok: c.fails === 0, detail: `${c.passes} passed, ${c.fails} failed` });
+  }
+  const failures = cases.filter((c) => !c.ok).length;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<testsuites>\n` +
+    `<testsuite name="k6 load test" tests="${cases.length}" failures="${failures}">\n` +
+    cases.map((c) => `  <testcase classname="k6" name="${esc(c.name)}">` +
+      (c.ok ? '' : `<failure message="${esc(c.detail)}"/>`) + '</testcase>').join('\n') +
+    `\n</testsuite>\n</testsuites>\n`;
+
+  const d = data.metrics.http_req_duration.values;
+  const text = [
+    '', 'k6 summary',
+    `  requests: ${data.metrics.http_reqs.values.count}  failed: ${(data.metrics.http_req_failed.values.rate * 100).toFixed(2)}%`,
+    `  duration: avg ${d.avg.toFixed(1)} ms  p(95) ${d['p(95)'].toFixed(1)} ms  max ${d.max.toFixed(1)} ms`,
+    ...cases.map((c) => `  ${c.ok ? 'PASS' : 'FAIL'}  ${c.name}`), '',
+  ].join('\n');
+
+  return {
+    stdout: text,
+    'reports/k6/junit.xml': xml,
+    'reports/k6/summary.json': JSON.stringify(data, null, 2),
+  };
+}

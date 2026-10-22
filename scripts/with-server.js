@@ -4,6 +4,7 @@
 // runs the command, then stops the app and exits with the command's exit code.
 // PORT can be overridden so several suites can run in parallel (e.g. in Jenkins).
 const { spawn } = require('node:child_process');
+const fs = require('node:fs');
 
 const command = process.argv.slice(2).join(' ');
 if (!command) {
@@ -11,6 +12,7 @@ if (!command) {
   process.exit(2);
 }
 
+fs.mkdirSync('reports/k6', { recursive: true }); // k6 does not create output folders itself
 process.loadEnvFile('.env.test'); // does not override variables that are already set
 const port = process.env.PORT || '4000';
 const env = { ...process.env, PORT: port };
