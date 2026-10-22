@@ -60,6 +60,8 @@ cypress/             e2e/ specs, support/ (commands, page objects)
 performance/load.js  k6 script
 scripts/with-server.js  start app -> run command -> stop app
 Jenkinsfile, docs/
+docs/GUIDE_JENKINS_AUTOMATION.md          how to automate ANY project with Jenkins
+docs/GUIDE_GITHUB_ACTIONS_AUTOMATION.md   how to automate ANY project with GitHub Actions
 ```
 
 ## Security notes (practice-project level)
