@@ -70,7 +70,7 @@ pipeline {
             DURATION = "${params.K6_DURATION}"
           }
           steps {
-            sh 'mkdir -p reports/k6 && node scripts/with-server.js k6 run --summary-export=reports/k6/summary.json performance/load.js'
+            sh 'npm run test:perf'
           }
         }
       }
@@ -79,7 +79,17 @@ pipeline {
 
   post {
     always {
+      // Cypress, Playwright and k6 all write JUnit XML into reports/ and show up on the build's Tests page
       junit allowEmptyResults: true, testResults: 'reports/**/*.xml'
+      script {
+        try {
+          // needs the HTML Publisher plugin; adds a 'Playwright Report' link to the job menu
+          publishHTML(target: [reportName: 'Playwright Report', reportDir: 'reports/playwright/html',
+                               reportFiles: 'index.html', keepAll: true, alwaysLinkToLastBuild: true, allowMissing: true])
+        } catch (err) {
+          echo "HTML Publisher plugin not available - skipping report link (${err.message})"
+        }
+      }
       archiveArtifacts allowEmptyArchive: true, artifacts: 'reports/**, cypress/screenshots/**, test-results/**'
     }
     failure { echo 'Build failed - check the test report and archived artifacts.' }
