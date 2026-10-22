@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
+    "allure-cypress": "^3.14.0",
+    "allure-playwright": "^3.14.0",
     "cypress": "^15.0.0"
   }
 }

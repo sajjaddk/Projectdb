@@ -32,6 +32,7 @@ Required plugins: **Pipeline**, **Git**, **JUnit** (all default).
 4. Polling (`pollSCM`) is already defined in the Jenkinsfile; the first manual build registers it.
 
 ## Results
+- **Allure Report** link (see the Allure section below).
 - **Test Result** tab: JUnit results from Cypress, Playwright and k6 (thresholds and checks).
 - **Playwright Report** link in the job menu (needs the HTML Publisher plugin; if the page is blank, see below).
 - **Build Artifacts**: `reports/playwright/html/index.html` (open it for the Playwright report), `reports/k6/junit.xml` + `summary.json`, Cypress screenshots on failure.
@@ -55,3 +56,16 @@ locally, or relax the policy once in **Manage Jenkins -> Script Console** (reset
 ```groovy
 System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "sandbox allow-scripts; default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:")
 ```
+
+## Allure report (one combined report for Playwright + Cypress)
+Playwright and Cypress write raw results to `allure-results/playwright` and `allure-results/cypress`; the Jenkinsfile
+merges them into one report.
+
+One-time Jenkins setup:
+1. **Manage Jenkins -> Plugins -> Available plugins** -> install **Allure** -> restart Jenkins when idle.
+2. **Manage Jenkins -> Tools -> Allure Commandline installations -> Add Allure Commandline**: name `allure`,
+   tick *Install automatically* (Maven Central), pick a 2.x version. Needs Java on the Jenkins machine (Jenkins already has it).
+3. Run the job. An **Allure Report** link appears in the job menu and on each build.
+
+Locally (optional): `npx allure-commandline generate allure-results/playwright allure-results/cypress -o allure-report --clean`
+then `npx allure-commandline open allure-report`.

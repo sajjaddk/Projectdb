@@ -1,4 +1,5 @@
 const { defineConfig } = require('cypress');
+const { allureCypress } = require('allure-cypress/reporter');
 
 process.loadEnvFile('.env.test'); // fake demo credentials; does not override variables already set
 const port = process.env.PORT || '4000';
@@ -7,6 +8,10 @@ const port = process.env.PORT || '4000';
 module.exports = defineConfig({
   e2e: {
     baseUrl: `http://127.0.0.1:${port}`,
+    setupNodeEvents(on, config) {
+      allureCypress(on, config, { resultsDir: 'allure-results/cypress' });
+      return config;
+    },
     specPattern: 'cypress/e2e/**/*.cy.js',
     supportFile: 'cypress/support/e2e.js',
     env: {

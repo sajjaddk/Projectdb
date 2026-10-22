@@ -17,3 +17,5 @@ playwright-report/
 cypress/screenshots/
 cypress/videos/
 cypress/downloads/
+allure-results/
+allure-report/

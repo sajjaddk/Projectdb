@@ -90,6 +90,14 @@ pipeline {
           echo "HTML Publisher plugin not available - skipping report link (${err.message})"
         }
       }
+      script {
+        try {
+          // needs the Allure Jenkins plugin + an "Allure Commandline" tool (Manage Jenkins -> Tools)
+          allure includeProperties: false, results: [[path: 'allure-results/playwright'], [path: 'allure-results/cypress']]
+        } catch (err) {
+          echo "Allure plugin/tool not configured - skipping Allure report (${err.message})"
+        }
+      }
       archiveArtifacts allowEmptyArchive: true, artifacts: 'reports/**, cypress/screenshots/**, test-results/**'
     }
     failure { echo 'Build failed - check the test report and archived artifacts.' }
