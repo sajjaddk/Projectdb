@@ -1,0 +1,27 @@
+{
+  "name": "projectdb-taxi",
+  "version": "1.0.0",
+  "description": "Small taxi company management app (cars, drivers, bookings) used to practise Cypress, Playwright, k6 and Jenkins.",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js",
+    "start:demo": "node --env-file=.env.test server.js",
+    "test:unit": "node --env-file=.env.test --test \"tests/unit/*.test.js\"",
+    "test:cy": "node scripts/with-server.js npx cypress run",
+    "cy:open": "node scripts/with-server.js npx cypress open",
+    "test:pw": "node scripts/with-server.js npx playwright test",
+    "test:perf": "node scripts/with-server.js k6 run performance/load.js",
+    "test": "npm run test:unit && npm run test:pw && npm run test:cy"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "cypress": "^15.0.0"
+  }
+}

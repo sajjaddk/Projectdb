@@ -1,0 +1,19 @@
+node_modules/
+# real secrets / local config (only .env.example and .env.test are committed)
+.env
+.env.local
+*.pem
+*.key
+credentials*
+secrets*
+# local database files
+data/
+*.db
+*.db-journal
+# test output
+reports/
+test-results/
+playwright-report/
+cypress/screenshots/
+cypress/videos/
+cypress/downloads/

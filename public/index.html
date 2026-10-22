@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Taxi Manager</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="message" role="alert" data-testid="message" hidden></div>
+
+  <!-- LOGIN -->
+  <main id="login-view" hidden>
+    <form id="login-form" class="card" autocomplete="on">
+      <h1>Taxi Manager</h1>
+      <label for="username">Username</label>
+      <input id="username" name="username" data-testid="username" maxlength="64" required autocomplete="username">
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" data-testid="password" maxlength="128" required autocomplete="current-password">
+      <button id="login-btn" type="submit" data-testid="login-btn">Sign in</button>
+    </form>
+  </main>
+
+  <!-- APP -->
+  <div id="app-view" hidden>
+    <header>
+      <strong>Taxi Manager</strong>
+      <nav id="tabs">
+        <button data-tab="bookings" data-testid="tab-bookings">Bookings</button>
+        <button data-tab="cars" data-testid="tab-cars">Cars</button>
+        <button data-tab="drivers" data-testid="tab-drivers">Drivers</button>
+        <button data-tab="users" data-testid="tab-users" id="tab-users-btn" hidden>Users</button>
+      </nav>
+      <span id="whoami" data-testid="whoami"></span>
+      <button id="logout-btn" data-testid="logout-btn">Sign out</button>
+    </header>
+
+    <!-- BOOKINGS -->
+    <section id="tab-bookings" class="tab">
+      <form id="booking-form" class="card grid">
+        <h2>New booking</h2>
+        <input name="customer_name" data-testid="b-customer" placeholder="Customer name" maxlength="100" required>
+        <input name="customer_phone" data-testid="b-phone" placeholder="Phone" maxlength="20" required>
+        <input name="pickup" data-testid="b-pickup" placeholder="Pickup address" maxlength="200" required>
+        <input name="dropoff" data-testid="b-dropoff" placeholder="Drop-off address" maxlength="200" required>
+        <input name="distance_km" data-testid="b-distance" type="number" step="0.1" min="0.1" max="500" placeholder="Distance (km)" required>
+        <input name="scheduled_at" data-testid="b-when" type="datetime-local" required>
+        <button type="submit" data-testid="b-submit">Create booking</button>
+      </form>
+      <table class="card" data-testid="bookings-table">
+        <thead><tr><th>ID</th><th>Customer</th><th>Route</th><th>Km</th><th>Fare</th><th>Status</th><th>Car / Driver</th><th>Actions</th></tr></thead>
+        <tbody id="bookings-body"></tbody>
+      </table>
+    </section>
+
+    <!-- CARS -->
+    <section id="tab-cars" class="tab" hidden>
+      <form id="car-form" class="card grid admin-only">
+        <h2>Register car</h2>
+        <input name="plate" data-testid="c-plate" placeholder="Plate" maxlength="10" required>
+        <input name="make" data-testid="c-make" placeholder="Make" maxlength="50" required>
+        <input name="model" data-testid="c-model" placeholder="Model" maxlength="50" required>
+        <input name="year" data-testid="c-year" type="number" min="1990" placeholder="Year" required>
+        <input name="seats" data-testid="c-seats" type="number" min="1" max="8" placeholder="Seats" required>
+        <select name="driver_id" data-testid="c-driver" id="car-driver-select"></select>
+        <button type="submit" data-testid="c-submit">Register car</button>
+      </form>
+      <table class="card" data-testid="cars-table">
+        <thead><tr><th>ID</th><th>Plate</th><th>Car</th><th>Seats</th><th>Status</th><th>Driver</th><th>Actions</th></tr></thead>
+        <tbody id="cars-body"></tbody>
+      </table>
+    </section>
+
+    <!-- DRIVERS -->
+    <section id="tab-drivers" class="tab" hidden>
+      <form id="driver-form" class="card grid admin-only">
+        <h2>Create driver</h2>
+        <input name="full_name" data-testid="d-name" placeholder="Full name" maxlength="100" required>
+        <input name="phone" data-testid="d-phone" placeholder="Phone" maxlength="20" required>
+        <input name="license_number" data-testid="d-license" placeholder="License number" maxlength="20" required>
+        <button type="submit" data-testid="d-submit">Create driver</button>
+      </form>
+      <table class="card" data-testid="drivers-table">
+        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>License</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="drivers-body"></tbody>
+      </table>
+    </section>
+
+    <!-- USERS -->
+    <section id="tab-users" class="tab" hidden>
+      <form id="user-form" class="card grid">
+        <h2>Add user</h2>
+        <input name="username" data-testid="u-name" placeholder="Username" maxlength="32" required>
+        <input name="password" data-testid="u-password" type="password" placeholder="Password (min 12)" maxlength="128" required autocomplete="new-password">
+        <select name="role" data-testid="u-role"><option value="dispatcher">dispatcher</option><option value="admin">admin</option></select>
+        <button type="submit" data-testid="u-submit">Add user</button>
+      </form>
+      <table class="card" data-testid="users-table">
+        <thead><tr><th>ID</th><th>Username</th><th>Role</th></tr></thead>
+        <tbody id="users-body"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
